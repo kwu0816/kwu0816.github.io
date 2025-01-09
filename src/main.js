@@ -3,7 +3,7 @@ const FormAutoFill = new Vue({
   data: {
 
     // Google Apps Script 部署為網路應用程式後的 URL
-    gas: 'https://script.google.com/macros/s/AKfycby0rUoYZ2QVj2OLrOBgxdppkFDs9iZWzcg9lSpRnhBisWSzGvgqZQE6cZelNCJCBeC9Gw/exec',
+    gas: 'https://script.google.com/macros/s/AKfycbzLZNvsVaMJWBMi4EoYimVWM_VOJXYU4-DfQ7gBl16F1B8nPrQav-4JB1coc91Yfo2A7Q/exec',
 
     id: '',
 
