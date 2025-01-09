@@ -3,7 +3,7 @@ const FormAutoFill = new Vue({
   data: {
 
     // Google Apps Script 部署為網路應用程式後的 URL
-    gas: 'https://script.google.com/macros/s/AKfycbxgpIoppAxyPW-hKYnTRcT-s6fsh70FUeUQB8N1lRRToz_Ug_Z_LpnNzwd8_JaoAQmC1g/exec',
+    gas: 'https://script.google.com/macros/s/AKfycbwyY7oLpoZ4lbcIwIWniLZ8U_pY8e7YBK9fakeszgR_77S2u1SV/exec',
 
     id: '',
 
@@ -14,16 +14,16 @@ const FormAutoFill = new Vue({
     person: {},
 
     // Google Form 的 action URL
-    formAction: 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8ErEx23qO4pZhKWHDYPa-nxlDm2YBkRM3nk0_PBK_7rK3RA/formResponse',
+    formAction: 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSeNBnd-yVJ7_-tMq5xaQrvt0j18UtabCFBTM0Eu2O3ivDecuQ/formResponse',
     
     // Google Form 各個 input 的 name
     input: {
-      id: 'entry.1036146278',
-      name: 'entry.318634021',
-      gender: 'entry.1424969468',
-      phone: 'entry.2050602623',
-      site: 'entry.1305190616',
-      msg: 'entry.1733921935'
+      id: 'entry.1815052017',
+      name: 'entry.1543576845',
+      gender: 'entry.892230025',
+      phone: 'entry.1003128242',
+      site: 'entry.260985931',
+      msg: 'entry.1782841550'
     },
 
     // loading 效果要不要顯示
