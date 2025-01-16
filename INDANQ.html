@@ -1,57 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>會員資料查詢</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
-  <h1>會員資料查詢</h1>
-  <input type="text" id="phone" placeholder="輸入會員電話">
-  <input type="text" id="memberId" placeholder="輸入會員編號">
-  <button onclick="fetchData()">查詢</button>
-  
-  <h2>查詢結果：</h2>
-  <div id="output">
-    <p><strong>姓名:</strong> <span id="name"></span></p>
-    <p><strong>消費次數:</strong> <span id="consumptionCount"></span></p>
-    <p><strong>會員點數:</strong> <span id="memberPoints"></span></p>
-    <p><strong>最後更新時間:</strong> <span id="lastUpdate"></span></p>
-    <p><strong>錯誤訊息:</strong> <span id="error"></span></p>
+  <div class="container">
+    <h1>會員資料查詢</h1>
+
+    <!-- 會員電話輸入 -->
+    <label for="phone">會員電話</label>
+    <input type="text" id="phone" placeholder="輸入會員電話">
+
+    <!-- 會員編號輸入 -->
+    <label for="memberId">會員編號</label>
+    <input type="text" id="memberId" placeholder="輸入會員編號">
+
+    <!-- 查詢按鈕 -->
+    <button onclick="fetchData()">查詢</button>
+
+    <!-- 顯示結果 -->
+    <div id="result" class="result"></div>
   </div>
 
   <script>
     async function fetchData() {
-      const phone = document.getElementById('phone').value; // 獲取輸入的會員電話
-      const memberId = document.getElementById('memberId').value; // 獲取輸入的會員編號
-      const url = 'https://script.google.com/macros/s/AKfycbxA6sk9Xqh3jQIWCIk-gEikmWdRVc5cE2rxc4COS3vPsJOBCfz-HlX98jXIe3tr8vXU/exec';
+      const phone = document.getElementById("phone").value;
+      const memberId = document.getElementById("memberId").value;
+
+      if (!phone || !memberId) {
+        alert("請輸入會員電話與會員編號！");
+        return;
+      }
+
+      const url = "https://script.google.com/macros/s/AKfycbwoAUmCZiN1GSFnAedghqTsYr2n1ja_UgiTiJZyuYWDkyfrlYaGi9Y5qMWzIe19NcZk/exec";
+      const params = new URLSearchParams({ phone, memberId });
 
       try {
-        // 發送 POST 請求到 Apps Script
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // 設定 Content-Type
-          },
-          body: `phone=${encodeURIComponent(phone)}&memberId=${encodeURIComponent(memberId)}`, // 傳送的資料
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // 解析回應的 JSON 資料
+        const response = await fetch(`${url}?${params.toString()}`, { method: "POST" });
         const data = await response.json();
 
-        // 顯示資料或錯誤訊息
-        document.getElementById('name').textContent = data.name || '';
-        document.getElementById('consumptionCount').textContent = data.consumptionCount || '';
-        document.getElementById('memberPoints').textContent = data.memberPoints || '';
-        document.getElementById('lastUpdate').textContent = data.lastUpdate || '';
-        document.getElementById('error').textContent = data.error || '';
+        // 處理回傳結果
+        const resultDiv = document.getElementById("result");
+        if (data.error) {
+          resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
+        } else {
+          resultDiv.innerHTML = `
+            <p><strong>姓名：</strong>${data.name}</p>
+            <p><strong>消費次數：</strong>${data.consumptionCount}</p>
+            <p><strong>會員點數：</strong>${data.memberPoints}</p>
+            <p><strong>最後更新時間：</strong>${data.lastUpdate}</p>
+          `;
+        }
       } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('error').textContent = '查詢失敗，請檢查輸入資料或後端設定。';
+        alert("發生錯誤，請稍後再試！");
+        console.error(error);
       }
     }
   </script>
