@@ -46,32 +46,36 @@
       background-color: #0056b3;
     }
 
-    .result {
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
       margin-top: 20px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    table, th, td {
+    .card {
+      background-color: #f9f9f9;
+      padding: 15px;
+      margin-bottom: 10px;
       border: 1px solid #ddd;
+      border-radius: 5px;
     }
 
-    th, td {
-      padding: 10px;
-      text-align: left;
+    .card p {
+      margin: 5px 0;
     }
 
-    th {
-      background-color: #f2f2f2;
-    }
+    /* 響應式設計，縮小字體 */
+    @media screen and (max-width: 768px) {
+      .container {
+        width: 100%;
+        padding: 10px;
+      }
 
-    .loading {
-      color: blue;
-      font-weight: bold;
+      .card {
+        font-size: 14px;
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -80,28 +84,33 @@
     <h1>會員資料查詢</h1>
 
     <!-- 會員電話輸入 -->
-    <label for="phone">聯繫電話</label>
-    <input type="text" id="phone" placeholder="輸入聯繫電話">
+    <label for="phone">會員電話</label>
+    <input type="text" id="phone" placeholder="輸入會員電話">
 
     <!-- 查詢按鈕 -->
     <button onclick="fetchData()">查詢</button>
 
+    <!-- 顯示載入中 -->
+    <div id="loading" class="loading" style="display: none;">載入中...</div>
+
     <!-- 顯示結果 -->
-    <div id="result" class="result"></div>
+    <div id="result"></div>
   </div>
 
   <script>
     async function fetchData() {
-      const phone = document.getElementById("phone").value;
+      const phoneInput = document.getElementById("phone");
+      const phone = phoneInput.value.replace(/\D/g, ''); // 移除非數字字符
       const resultDiv = document.getElementById("result");
+      const loadingDiv = document.getElementById("loading");
 
       if (!phone) {
-        alert("請輸入聯繫電話！");
+        alert("請輸入會員電話！");
         return;
       }
 
-      // 顯示載入中
-      resultDiv.innerHTML = `<p class="loading">載入中...</p>`;
+      resultDiv.innerHTML = "";
+      loadingDiv.style.display = "block"; // 顯示「載入中」
 
       const url = "https://script.google.com/macros/s/AKfycbwIECbQiLyUfrUDbc4155ALu2epZ1Xtffo8cxpA65spuPhn4ytlU5_JN2h_YT3cNw9txw/exec";
       const params = new URLSearchParams({ phone });
@@ -109,50 +118,40 @@
       try {
         const response = await fetch(`${url}?${params.toString()}`, { method: "POST" });
         const data = await response.json();
-
-        // 清除舊資料
-        resultDiv.innerHTML = "";
-
-        if (data.error) {
-          resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
-        } else if (data.length === 0) {
-          resultDiv.innerHTML = `<p style="color: red;">查無資料</p>`;
-        } else {
-          // 產生表格
-          let tableHTML = `
-            <table>
-              <tr>
-                <th>更新時間</th>
-                <th>建單時間</th>
-                <th>發票號碼</th>
-                <th>預付訂金</th>
-                <th>剩餘訂金</th>
-                <th>聯繫人</th>
-                <th>聯繫電話</th>
-              </tr>
-          `;
-
-          data.forEach(item => {
-            tableHTML += `
-              <tr>
-                <td>${item.更新時間}</td>
-                <td>${item.建單時間}</td>
-                <td>${item.發票號碼}</td>
-                <td>${item.預付訂金}</td>
-                <td>${item.剩餘訂金}</td>
-                <td>${item.聯繫人}</td>
-                <td>${item.聯繫電話}</td>
-              </tr>
-            `;
-          });
-
-          tableHTML += `</table>`;
-          resultDiv.innerHTML = tableHTML;
-        }
+        displayData(data);
       } catch (error) {
         resultDiv.innerHTML = `<p style="color: red;">發生錯誤，請稍後再試！</p>`;
         console.error(error);
+      } finally {
+        loadingDiv.style.display = "none"; // 隱藏「載入中」
       }
+    }
+
+    function displayData(data) {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+
+      if (data.error) {
+        resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
+        return;
+      }
+
+      let html = "";
+      data.forEach((item) => {
+        html += `
+          <div class="card">
+            <p><strong>更新時間：</strong>${item.更新時間}</p>
+            <p><strong>建單時間：</strong>${item.建單時間}</p>
+            <p><strong>發票號碼：</strong>${item.發票號碼}</p>
+            <p><strong>預付訂金：</strong>${item.預付訂金}</p>
+            <p><strong>剩餘訂金：</strong>${item.剩餘訂金}</p>
+            <p><strong>聯繫人：</strong>${item.聯繫人}</p>
+            <p><strong>聯繫電話：</strong>${item.聯繫電話}</p>
+          </div>
+        `;
+      });
+
+      resultDiv.innerHTML = html;
     }
   </script>
 </body>
